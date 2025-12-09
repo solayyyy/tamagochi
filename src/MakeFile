@@ -1,5 +1,1 @@
-all:
-	g++ -Wall -std=c++17 -Iinclude -Iinclude/sdl -Iinclude/headers \
-	src/Main.cpp \
-	-o Main.exe \
-	-Llib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -mwindows
+g++ src/Main.cpp -Iinclude/sdl -Iinclude/headers -Llib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -mwindows -o Main.exe
