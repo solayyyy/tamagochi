@@ -1,8 +1,7 @@
-#ifndef ANIMAL_HPP 
-#define ANIMAL_HPP
+#ifdef LIEU_HPP 
+#define LIEU_HPP
 
 #include <string>
-
 class Lieu{
     protected:
     std::string nom;
