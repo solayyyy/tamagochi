@@ -90,8 +90,8 @@ int main(int argc, char* argv[]) {
         SDL_RenderClear(renderer);
 
         // Dessiner les barres de stats
-        drawStatBar(renderer, 50, 50, 500, 30, stats.getFaim(),    {255, 0, 0, 255});   // rouge
-        drawStatBar(renderer, 50, 100, 500, 30, stats.getJoie(), {0, 255, 0, 255});   // vert
+        drawStatBar(renderer, 50, 50, 500, 30, stats.getFaim(),    {255, 0, 0, 255});    // rouge
+        drawStatBar(renderer, 50, 100, 500, 30, stats.getJoie(), {0, 255, 0, 255});      // vert
         drawStatBar(renderer, 50, 150, 500, 30, stats.getSante(),   {0, 0, 255, 255});   // bleu
         drawStatBar(renderer, 50, 200, 500, 30, stats.getEnergie(), {255, 255, 0, 255}); // jaune
 
