@@ -3,7 +3,7 @@
 
 class Stats{ //décalaration des statistiques de l'animal
     private:
-        float bonheur;
+        float joie;
         float faim;
         float energie;
         float sante;

@@ -19,30 +19,35 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
-#include "include/headers/Statistique.hpp"
-// Ta classe Stats minimale
+#include "Statistique.hpp"
 
-
-// Fonction pour dessiner une barre de stat
+//Dessin de la barre d'état des stats de l'animal
 void drawStatBar(SDL_Renderer* renderer, int x, int y, int w, int h, float percent, SDL_Color color) {
-    // Fond gris
+    
+    // Fond blanc
     SDL_Rect bgRect = {x, y, w, h};
-    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(renderer, &bgRect);
 
-    // Barre colorée
+    // Création des Barres d'états colorées
     SDL_Rect fgRect = {x, y, static_cast<int>(w * (percent / 100.0f)), h};
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
     SDL_RenderFillRect(renderer, &fgRect);
+
+    //contour des barres en noir
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderDrawRect(renderer, &bgRect);
 }
 
+//Main du jeux 
 int main(int argc, char* argv[]) {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+
+    /*if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         std::cerr << "Erreur SDL_Init: " << SDL_GetError() << std::endl;
         return 1;
     }
-
-    // Initialisation SDL_image
+*/
+    // Initialisation SDL_image  /  de ici !
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
         std::cerr << "Erreur IMG_Init: " << IMG_GetError() << std::endl;
         SDL_Quit();
@@ -66,7 +71,7 @@ int main(int argc, char* argv[]) {
         IMG_Quit();
         SDL_Quit();
         return 1;
-    }
+    } //A ici a revoir !! 
 
     Stats stats; // Tes stats
 
@@ -81,7 +86,7 @@ int main(int argc, char* argv[]) {
         }
 
         // Nettoyer l'écran
-        SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
 
         // Dessiner les barres de stats
