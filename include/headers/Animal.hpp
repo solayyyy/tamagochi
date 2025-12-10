@@ -2,15 +2,26 @@
 #define ANIMAL_HPP
 
 
+
 #include <SDL.h>
 #include <SDL_image.h>
+#include  "Statistique.hpp"
+
 #include <string>
+
+enum class humeur{ //enum est un groupe de constante
+    heureux,
+    triste,
+    fatigue,
+    mort,
+};
 
 class Animal{
     protected: 
         std::string type;
         std::string sexe;
         int age;
+        Stats* Stats; //Animal possède les statistiques
 
     public:
         std::string nom;
