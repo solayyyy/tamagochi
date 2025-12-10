@@ -1,13 +1,22 @@
 #ifndef ANIMAL_HPP //Pour éviter toute confusion on l'écrit en MAJUSCULE
 #define ANIMAL_HPP
 
+#include  "Statistique.hpp"
 #include <string>
+
+enum class humeur{ //enum est un groupe de constante
+    heureux,
+    triste,
+    fatigue,
+    mort,
+};
 
 class Animal{
     protected: 
         std::string type;
         std::string sexe;
         int age;
+        Stats* Stats; //Animal possède les statistiques
 
     public:
         std::string nom;
