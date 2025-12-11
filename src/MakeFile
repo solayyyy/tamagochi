@@ -1,4 +1,4 @@
 g++ src/Main.cpp -Iinclude/sdl -Iinclude/headers -Llib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -mwindows -o Main.exe
 
 g++ src/testleane.cpp src/Animal.cpp -Iinclude/headers -Iinclude/sdl -Llib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -o test.exe
-g++ src/Exemple2_lilou.cpp src/Statistique.cpp -Iinclude/headers -Iinclude/sdl -Llib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -o test.exe
+g++ src/Exemple2_lilou.cpp src/Animal.cpp src/Statistique.cpp -Iinclude/headers -Iinclude/sdl -Llib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -o test.exe
