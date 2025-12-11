@@ -2,13 +2,47 @@
 #include <SDL_image.h>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "Animal.hpp"
+#include "Maison.hpp"
+#include "Lieu.hpp"
+#include "Arcade.hpp"
 
 //initialisation
 
 bool initialize_sdl_components(SDL_Window** window, SDL_Renderer** renderer);
 void cleanup(SDL_Window* window, SDL_Renderer* renderer);
+
+
+void changeLieu(Lieu*& currentLieu, SceneType nextScene, SDL_Renderer* renderer, Animal* animal) {
+    if (currentLieu) {
+        // 1. DÉTRUIRE l'ancienne scène pour libérer la mémoire
+        delete currentLieu;
+        currentLieu = nullptr;
+    }
+    // 2. CRÉER la nouvelle scène en fonction du type demandé
+    switch (nextScene) {
+        case SCENE_MAISON:
+            std::cout << "Chargement de la Maison..." << std::endl;
+            // On suppose que la Maison a besoin du renderer et de l'animal
+            currentLieu = new Maison(renderer, animal); 
+            break;
+        case SCENE_ARCADE:
+            std::cout << "Chargement de l'Arcade..." << std::endl;
+            // On suppose que l'Arcade n'a besoin que du renderer
+            currentLieu = new Arcade(renderer); 
+            break;
+        //case SCENE_BOUTIQUE:
+          //  std::cout << "Chargement de la Boutique..." << std::endl;
+            // On suppose que la Boutique a besoin du renderer et de l'animal pour les stats
+          //  currentLieu = new Boutique(renderer, animal); 
+           // break;
+        default:
+            // S'il y a une erreur ou SCENE_QUIT (géré par la boucle principale)
+            break; 
+    }
+}
 
 int main(int argc, char* argv[]) {
     SDL_Window* window = nullptr;
@@ -20,9 +54,22 @@ int main(int argc, char* argv[]) {
         cleanup(window, renderer); 
         return 1;
     }
+
+
+
+
+    Lieu* m_currentLieu = nullptr;
     
+
+
     // pour eviter le flou comme pixel art
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0"); 
+
+    // Définition des chemins des 2 frames d'animation
+    std::vector<std::string> chatFrames = {
+        "res/Chat1/Chat1_frame1.png", // Frame 0
+        "res/Chat1/Chat1_frame2.png"  // Frame 1
+    };
     
     // créa objet
     
@@ -32,8 +79,10 @@ int main(int argc, char* argv[]) {
         "M", 
         1, 
         renderer, 
-        "res/GIF_128_128/Chat1.gif"
+        chatFrames
     );
+
+    changeLieu(m_currentLieu, SCENE_MAISON, renderer, &monAnimal);
 
     // Boucle du jeu
     bool running = true;
@@ -46,7 +95,25 @@ int main(int argc, char* argv[]) {
                 (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)) {
                 running = false;
             }
+            if (m_currentLieu) {
+                m_currentLieu->handleEvents(event);
+            }
         }
+        if (m_currentLieu) {
+            m_currentLieu->update();
+        }
+
+        if (m_currentLieu && m_currentLieu->isTransitionPending()) {
+            SceneType nextScene = m_currentLieu->getNextScene();
+            
+            if (nextScene == SCENE_QUIT) {
+                running = false; // Arrêter la boucle
+            } else {
+                // Changer la scène
+                changeLieu(m_currentLieu, nextScene, renderer, &monAnimal);
+            }
+        }
+        monAnimal.updateAnimation();
 
         // --- DESSIN ET RENDU --- (A modifier pour le fond et tout ça)
         
@@ -56,6 +123,13 @@ int main(int argc, char* argv[]) {
 
         // Afficher l'animal 
         monAnimal.render(renderer);
+
+
+        //Afficher bg du lieu
+        if (m_currentLieu) {
+            m_currentLieu->render(renderer);
+        }
+        
 
         // Présenter le résultat à l'écran
         SDL_RenderPresent(renderer);
@@ -131,3 +205,4 @@ void cleanup(SDL_Window* window, SDL_Renderer* renderer) {
     IMG_Quit();
     SDL_Quit();
 }
+
