@@ -5,25 +5,28 @@
 
 //Explication de la création de la classe Animal à compléter plus tard dans le main 
 Animal::Animal(const std::string& nom, const std::string& type, const std::string& sexe, int age,
-               SDL_Renderer* renderer, const std::string& chemin_image) 
+               SDL_Renderer* renderer, const std::vector<std::string>& chemin_image) 
     : nom(nom), type(type), sexe(sexe), age(age), 
-      m_texture(nullptr) {
+      m_lastFrameTime(SDL_GetTicks()) {
 
 
         //Chargement SDL
-        SDL_Surface* surface = IMG_Load(chemin_image.c_str());
-    if (!surface) {
-        std::cerr << "Erreur chargement image animal: " << chemin_image << " | " << IMG_GetError() << std::endl;
-        return; 
-    }
+        for (const auto& chemin : chemin_image) {
+            SDL_Surface* surface = IMG_Load(chemin.c_str());
+            if (!surface) {
+                std::cerr << "Erreur chargement frame: " << chemin << " | " << IMG_GetError() << std::endl;
+                continue; // Continue au lieu de s'arrêter pour le moment
+            }
 
-    m_texture = SDL_CreateTextureFromSurface(renderer, surface);
-    
-    if (!m_texture) {
-        std::cerr << "Erreur création texture animal: " << SDL_GetError() << std::endl;
-    }
+        SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+            if (texture) {
+                m_textures.push_back(texture); // Stocke la nouvelle texture
+            } else {
+                std::cerr << "Erreur création texture: " << SDL_GetError() << std::endl;
+            }
 
-    SDL_FreeSurface(surface); 
+        SDL_FreeSurface(surface); 
+        }
 
 
 
@@ -35,8 +38,8 @@ Animal::Animal(const std::string& nom, const std::string& type, const std::strin
 
     Animal::~Animal() {
     // Détruit la texture lorsque l'objet Animal est détruit.
-    if (m_texture) {
-        SDL_DestroyTexture(m_texture);
+    for (SDL_Texture* texture : m_textures) {
+        SDL_DestroyTexture(texture);
     }
 }
 
@@ -52,11 +55,28 @@ void Animal::setSexe(const std::string& nouveau_sexe) { sexe = nouveau_sexe; }
 void Animal::setAge(int nouveau_age) { age = nouveau_age; }
 
 
+//Méthode d'animation
+void Animal::updateAnimation() {
+    if (m_textures.empty()) return;
+
+    Uint32 currentTime = SDL_GetTicks();
+    
+    // Vérifie si le temps de la FRAME_DURATION_MS est écoulé
+    if (currentTime > m_lastFrameTime + FRAME_DURATION_MS) {
+        // Passe à la frame suivante 
+        m_currentFrameIndex = (m_currentFrameIndex + 1) % m_textures.size();
+        
+        // Met à jour le temps de la dernière frame
+        m_lastFrameTime = currentTime; 
+    }
+}
+
+
 //Méthode rendu 
 void Animal::render(SDL_Renderer* renderer) {
-    if (m_texture) {
-        SDL_RenderCopy(renderer, m_texture, NULL, &m_position);
-    }
+    if (m_textures.empty()) return;
+    SDL_RenderCopy(renderer, m_textures[m_currentFrameIndex], NULL, &m_position);
+
 }
 
 // Méthode position
