@@ -4,18 +4,17 @@
 #include "Lieu.hpp"
 #include <SDL.h>
 
-class Arcade : public Lieu {
+class Arcade {
 public:
     Arcade(SDL_Renderer* renderer);
-    ~Arcade() override {}
+    ~Arcade(); 
 
-    void handleEvents(SDL_Event& event) override;
-    void update() override;
-    void render(SDL_Renderer* renderer) override;
+    void handleEvents(SDL_Event& event);
+    void update();
+    void render(SDL_Renderer* renderer);
 
 private:
-    // Pointeur vers le renderer, stocké si besoin
-    SDL_Renderer* m_renderer; 
-};
-
+    SDL_Renderer* m_renderer = nullptr;
+    SDL_Texture* background = "res/scène_arcade.png"; 
+}
 #endif // ARCADE_HPP
