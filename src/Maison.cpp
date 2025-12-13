@@ -1,3 +1,4 @@
+
 #include "Maison.hpp"
 #include <iostream>
 #include <SDL_image.h>
@@ -11,7 +12,7 @@ Maison::Maison(SDL_Renderer* renderer, Animal* animal) :
     // CHARGEMENT DES RESSOURCES DU BOUTON
     // (Assurez-vous que cette image existe)
     m_buttonTexture = loadTexture(renderer, "res/interface/bouton_arcade.png"); 
-    m_background = loadTexture(renderer, "res/bg_maison.png");
+    m_background = loadTexture(renderer, "res/scène_chambre.png");
     
     // CRÉATION DE L'OBJET BOUTON
     // Le bouton est placé en haut à droite (par exemple)
@@ -76,5 +77,3 @@ SDL_Texture* Maison::loadTexture(SDL_Renderer* renderer, const std::string& chem
 
 
 // --- DESTRUCTEUR ---
-
-

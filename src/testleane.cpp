@@ -82,7 +82,8 @@ int main(int argc, char* argv[]) {
         chatFrames
     );
 
-    changeLieu(m_currentLieu, SCENE_MAISON, renderer, &monAnimal);
+    changeLieu(m_currentLieu, SCENE_MAISON, renderer, &monAnimal); //corriger et a voir.
+
 
     // Boucle du jeu
     bool running = true;

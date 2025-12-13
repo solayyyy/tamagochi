@@ -5,6 +5,7 @@
 #include "Animal.hpp"
 #include "Statistique.hpp"
 
+
 void Barre_Etat(SDL_Renderer* renderer, int x, int y, int w, int h, float percent, SDL_Color color) {
     percent = std::max(0.0f, std::min(100.0f, percent));
 

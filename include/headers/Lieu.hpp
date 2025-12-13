@@ -26,15 +26,19 @@ public:
     bool isTransitionPending() const { return m_nextScene != SCENE_MAISON; } // Si ce n'est pas la scène par défaut
     SceneType getNextScene() const { return m_nextScene; }
 
-protected:
-    
+protected: //rajout pour fonctionnment a voir aussi
     void requestTransition(SceneType nextScene) {
         m_nextScene = nextScene;
+        m_transitionPending = true;
     }
-    
-private:
-    SceneType m_nextScene = SCENE_MAISON; // SCENE_MAISON sera la valeur par défaut / scène active
 
+    void resetTransition() {
+        m_transitionPending = false;
+    }
+
+private:
+    bool m_transitionPending = false;
+    SceneType m_nextScene = SCENE_MAISON;
 };
 
 #endif // LIEU_HPP
