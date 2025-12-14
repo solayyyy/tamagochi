@@ -1,31 +1,39 @@
 #include "Arcade.hpp"
-#include <iostream>
+#include <SDL.h>
 #include <SDL_image.h>
+#include <iostream>
 
-
-Arcade::Arcade(SDL_Renderer* renderer) : m_renderer(renderer) {
+Arcade::Arcade(SDL_Renderer* renderer)
+{
+    background = nullptr;
 
     SDL_Surface* surface = IMG_Load("res/scene_arcade.png");
+    if (!surface) {
+        std::cerr << IMG_GetError() << std::endl; //std::cerr pour l'extraction des erreurs
+        return;
+    }
+
     background = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface); 
+    SDL_FreeSurface(surface);
 }
 
-Arcade::~Arcade() {
-    SDL_DestroyTexture(background);
-}
-
-void Arcade::handleEvents(SDL_Event& event) {
-    if (event.type == SDL_KEYDOWN) {
-        if (event.key.keysym.sym == SDLK_r) {
-            // requestTransition(SCENE_MAISON);
-        }
+Arcade::~Arcade()
+{
+    if (background) {
+        SDL_DestroyTexture(background);
     }
 }
 
-void Arcade::update() {}
+void Arcade::render(SDL_Renderer* renderer)
+{
+    if (background) {
+        SDL_RenderCopy(renderer, background, nullptr, nullptr);
+    }
+}
 
-void Arcade::render(SDL_Renderer* renderer) {
-    SDL_RenderClear(renderer);
-
-    SDL_RenderCopy(renderer, background, nullptr, nullptr); //nullptr signifie toute l'image et pour toute la fenetre
+void Arcade::handleEvents(SDL_Event& event){
+    //Vide pour l'instant mais apparement obligatoire pour une bonne compilation
+}
+void Arcade::update(){
+    //Same que handleEvents
 }

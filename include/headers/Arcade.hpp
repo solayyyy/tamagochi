@@ -4,7 +4,7 @@
 #include "Lieu.hpp"
 #include <SDL.h>
 
-class Arcade {
+class Arcade : public Lieu{
 public:
     Arcade(SDL_Renderer* renderer);
     ~Arcade(); 
@@ -15,6 +15,6 @@ public:
 
 private:
     SDL_Renderer* m_renderer = nullptr;
-    SDL_Texture* background = "res/scène_arcade.png"; 
-}
+    SDL_Texture* background;
+};
 #endif // ARCADE_HPP
