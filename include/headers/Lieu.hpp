@@ -23,15 +23,13 @@ public:
     virtual void render(SDL_Renderer* renderer) = 0;
 
     
-    bool isTransitionPending() const { return m_nextScene != SCENE_MAISON; } // Si ce n'est pas la scène par défaut
+    bool isTransitionPending() const { return m_transitionPending; } // Si ce n'est pas la scène par défaut
     SceneType getNextScene() const { return m_nextScene; }
 
     void clearTransition(){
         m_transitionPending = false;
     }
-
-protected: //rajout pour fonctionnment a voir aussi
-    void requestTransition(SceneType nextScene) {
+        void requestTransition(SceneType nextScene) {
         m_nextScene = nextScene;
         m_transitionPending = true;
     }
@@ -39,6 +37,9 @@ protected: //rajout pour fonctionnment a voir aussi
     void resetTransition() {
         m_transitionPending = false;
     }
+
+
+protected: //rajout pour fonctionnment a voir aussi
 
 private:
     bool m_transitionPending = false;

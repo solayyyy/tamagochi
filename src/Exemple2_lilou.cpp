@@ -135,6 +135,7 @@ int main(int argc, char* argv[]) {
         if (m_currentLieu && m_currentLieu->isTransitionPending()) {
 
             SceneType nextScene = m_currentLieu->getNextScene();
+            std::cout << "Transition vers scene: " << nextScene << std::endl;
 
             m_currentLieu->resetTransition();
 

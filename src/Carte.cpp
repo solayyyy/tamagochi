@@ -58,7 +58,6 @@ void Carte::handleEvents(SDL_Event& event){
             my >= btnMaison.y && my <= btnMaison.y + btnMaison.h) {
             requestTransition(SCENE_MAISON);
             std::cout << "CLIC MAISON OK\n";
-            requestTransition(SCENE_MAISON);
         }
 
         // Aller Arcade
