@@ -106,6 +106,8 @@ int main(int argc, char* argv[]) {
 
         if (m_currentLieu && m_currentLieu->isTransitionPending()) {
             SceneType nextScene = m_currentLieu->getNextScene();
+
+            m_currentLieu->resetTransition();
             
             if (nextScene == SCENE_QUIT) {
                 running = false; // Arrêter la boucle

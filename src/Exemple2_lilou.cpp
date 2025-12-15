@@ -10,6 +10,7 @@
 #include "Lieu.hpp"
 #include "Arcade.hpp"
 #include "Statistique.hpp"
+#include "Carte.hpp"
 
 
 void changeLieu(Lieu*& currentLieu, SceneType nextScene, SDL_Renderer* renderer, Animal* animal) {
@@ -30,6 +31,11 @@ void changeLieu(Lieu*& currentLieu, SceneType nextScene, SDL_Renderer* renderer,
             // On suppose que l'Arcade n'a besoin que du renderer
             currentLieu = new Arcade(renderer); 
             break;
+        case SCENE_CARTE:
+            std::cout << "Chargement de la Carte..." << std::endl;
+            //seulement le renderer
+            currentLieu = new Carte(renderer);
+            break;
         //case SCENE_BOUTIQUE:
           //  std::cout << "Chargement de la Boutique..." << std::endl;
             // On suppose que la Boutique a besoin du renderer et de l'animal pour les stats
@@ -45,15 +51,24 @@ int main(int argc, char* argv[]) {
 
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
+    SDL_Texture* btnCarteTexture = nullptr;
+    SDL_Rect btnCarteRect = {160, 360, 80, 20};
 
     if (!Init_SDL(&window, &renderer))
     
         return -1;
+
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
     
     Lieu* m_currentLieu = nullptr;
-
-    // pour eviter le flou comme pixel art
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0"); 
+    SDL_Surface* surfaceBtnCarte = IMG_Load("res/interface/btn_carte.png");
+    if (!surfaceBtnCarte) {
+        std::cerr << "Erreur chargement btn_carte.png : "
+              << IMG_GetError() << std::endl;
+    } else {
+        btnCarteTexture = SDL_CreateTextureFromSurface(renderer, surfaceBtnCarte);
+        SDL_FreeSurface(surfaceBtnCarte);
+}
 
     // Définition des chemins des 2 frames d'animation
     std::vector<std::string> chatFrames = {
@@ -118,25 +133,35 @@ int main(int argc, char* argv[]) {
         }
 
         if (m_currentLieu && m_currentLieu->isTransitionPending()) {
-            SceneType nextScene = m_currentLieu->getNextScene();
-            
-            if (nextScene == SCENE_QUIT) {
-                run = false; // Arrêter la boucle
-            } else {
-                // Changer la scène
-                changeLieu(m_currentLieu, nextScene, renderer, &monAnimal);
-            }
+        SceneType nextScene = m_currentLieu->getNextScene();
+        m_currentLieu->clearTransition();
+        std::cout << "DEBUG nextScene = " << (int)nextScene << "\n";
+
+        if (nextScene == SCENE_QUIT) {
+            run = false;
+        } else {
+            changeLieu(m_currentLieu, nextScene, renderer, &monAnimal);
         }
+    }
+        
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
 
         // 1. Dessiner la scène EN PREMIER
         if (m_currentLieu) {
         m_currentLieu->render(renderer);
-}
+    }
         if (dynamic_cast<Maison*>(m_currentLieu)){
+            if (btnCarteTexture) {
+                SDL_RenderCopy(renderer, btnCarteTexture, nullptr, &btnCarteRect);
+
+            }
+
             // cadre
             SDL_Rect cadre = {50, 350, 500, 90};
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-            SDL_RenderDrawRect(renderer, &cadre);
+
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+            SDL_RenderFillRect(renderer, &cadre);
 
             // barres d'état
             Barre_Etat(renderer, 330, 360, 200, 10, stats.getFaim(), {255, 0, 0, 255});
@@ -154,6 +179,10 @@ int main(int argc, char* argv[]) {
             SDL_RenderFillRect(renderer, &btnSoigner);
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             SDL_RenderDrawRect(renderer, &btnSoigner);
+
+            //Contour du grand cadre en noir et affichage
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            SDL_RenderDrawRect(renderer, &cadre);
         }
 
         // Timer
@@ -179,6 +208,11 @@ int main(int argc, char* argv[]) {
     
 }
     //tout netoyer
+    if (btnCarteTexture)
+        SDL_DestroyTexture(btnCarteTexture);
+
+    delete m_currentLieu;
     cleanup(window, renderer);
+
     return 0;
 }

@@ -7,7 +7,7 @@
 enum SceneType {
     SCENE_MAISON,
     SCENE_ARCADE,
-    SCENE_BOUTIQUE,
+    SCENE_CARTE,
     SCENE_QUIT 
 };
 
@@ -25,6 +25,10 @@ public:
     
     bool isTransitionPending() const { return m_nextScene != SCENE_MAISON; } // Si ce n'est pas la scène par défaut
     SceneType getNextScene() const { return m_nextScene; }
+
+    void clearTransition(){
+        m_transitionPending = false;
+    }
 
 protected: //rajout pour fonctionnment a voir aussi
     void requestTransition(SceneType nextScene) {
