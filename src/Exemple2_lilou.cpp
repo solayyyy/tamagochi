@@ -133,16 +133,18 @@ int main(int argc, char* argv[]) {
         }
 
         if (m_currentLieu && m_currentLieu->isTransitionPending()) {
-        SceneType nextScene = m_currentLieu->getNextScene();
-        m_currentLieu->clearTransition();
-        std::cout << "DEBUG nextScene = " << (int)nextScene << "\n";
 
-        if (nextScene == SCENE_QUIT) {
-            run = false;
-        } else {
-            changeLieu(m_currentLieu, nextScene, renderer, &monAnimal);
+            SceneType nextScene = m_currentLieu->getNextScene();
+
+            m_currentLieu->resetTransition();
+
+            if (nextScene == SCENE_QUIT) {
+                run = false;
+            } else {
+                changeLieu(m_currentLieu, nextScene, renderer, &monAnimal);
+            }
         }
-    }
+
         
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
