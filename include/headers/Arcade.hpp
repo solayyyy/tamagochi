@@ -3,6 +3,7 @@
 
 #include "Lieu.hpp"
 #include "Bouton.hpp"
+#include "MiniJeu.hpp"
 #include <SDL.h>
 #include <string>
 
@@ -23,7 +24,15 @@ private:
     // Ajout du bouton
     Bouton* btnCarte;
     SDL_Texture* m_buttonTexture;
+
+    //Bouton du premier mini jeu
+    Bouton* btnmj1;
+    SDL_Texture* m_btnmj1Texture;
     
+
+    MiniJeu* m_miniJeu;  
+    bool m_isPlayingGame;
+
     // Fonction utilitaire pour charger les textures
     SDL_Texture* loadTexture(SDL_Renderer* renderer, const std::string& chemin);
 

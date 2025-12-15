@@ -18,11 +18,5 @@ void Bouton::render(SDL_Renderer* renderer) const {
     if (m_texture) {
         SDL_RenderCopy(renderer, m_texture, NULL, &m_rect);
     } 
-    // Optionnel : Si pas de texture, on peut dessiner un rectangle de couleur
-    /*
-    else {
-        SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255); // Gris
-        SDL_RenderFillRect(renderer, &m_rect);
-    }
-    */
+  
 }
