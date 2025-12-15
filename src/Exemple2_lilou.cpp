@@ -1,54 +1,80 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <iostream>
+#include <string>
+#include <vector>
 
+#include "Init_SDL.hpp"
 #include "Animal.hpp"
+#include "Maison.hpp"
+#include "Lieu.hpp"
+#include "Arcade.hpp"
 #include "Statistique.hpp"
+#include "Carte.hpp"
 
-void Barre_Etat(SDL_Renderer* renderer, int x, int y, int w, int h, float percent, SDL_Color color) {
-    percent = std::max(0.0f, std::min(100.0f, percent));
 
-    SDL_Rect bg = {x, y, w, h};                                   // Fond
-    SDL_Rect fg = {x, y, int(w * (percent / 100.f)), h};          // Barre remplie
-
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);          // Fond blanc
-    SDL_RenderFillRect(renderer, &bg);
-
-    SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, 255);
-    SDL_RenderFillRect(renderer, &fg);
-
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);                // Contour Noir
-    SDL_RenderDrawRect(renderer, &bg);
-}
-
-//Initialisation SDL_image et SDL
-bool Initialise_SDL(SDL_Window** win, SDL_Renderer** ren) {
-    SDL_Init(SDL_INIT_VIDEO); //initialisation de la fenêtre
-    IMG_Init(IMG_INIT_PNG); //et de l'image
-
-    *win = SDL_CreateWindow("Super jeu de Léane et Lilou",
-        100, 100, 600, 500, 0);
-
-    *ren = SDL_CreateRenderer(*win, -1, SDL_RENDERER_ACCELERATED); //Dessin des barres grace a ça 
-
-    return true;
-}
-
-//vider la mémoire après fermeture de la fenêtre
-void cleanup(SDL_Window* win, SDL_Renderer* ren) {
-    if (ren) SDL_DestroyRenderer(ren);
-    if (win) SDL_DestroyWindow(win);
-    IMG_Quit();
-    SDL_Quit();
+void changeLieu(Lieu*& currentLieu, SceneType nextScene, SDL_Renderer* renderer, Animal* animal) {
+    if (currentLieu) {
+        // 1. DÉTRUIRE l'ancienne scène pour libérer la mémoire
+        delete currentLieu;
+        currentLieu = nullptr;
+    }
+    // 2. CRÉER la nouvelle scène en fonction du type demandé
+    switch (nextScene) {
+        case SCENE_MAISON:
+            std::cout << "Chargement de la Maison..." << std::endl;
+            // On suppose que la Maison a besoin du renderer et de l'animal
+            currentLieu = new Maison(renderer, animal); 
+            break;
+        case SCENE_ARCADE:
+            std::cout << "Chargement de l'Arcade..." << std::endl;
+            // On suppose que l'Arcade n'a besoin que du renderer
+            currentLieu = new Arcade(renderer); 
+            break;
+        case SCENE_CARTE:
+            std::cout << "Chargement de la Carte..." << std::endl;
+            //seulement le renderer
+            currentLieu = new Carte(renderer);
+            break;
+        //case SCENE_BOUTIQUE:
+          //  std::cout << "Chargement de la Boutique..." << std::endl;
+            // On suppose que la Boutique a besoin du renderer et de l'animal pour les stats
+          //  currentLieu = new Boutique(renderer, animal); 
+           // break;
+        default:
+            // S'il y a une erreur ou SCENE_QUIT (géré par la boucle principale)
+            break; 
+    }
 }
 
 int main(int argc, char* argv[]) {
 
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
+    SDL_Texture* btnCarteTexture = nullptr;
+    SDL_Rect btnCarteRect = {160, 360, 80, 20};
 
-    if (!Initialise_SDL(&window, &renderer))
-        return 1;
+    if (!Init_SDL(&window, &renderer))
+    
+        return -1;
+
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+    
+    Lieu* m_currentLieu = nullptr;
+    SDL_Surface* surfaceBtnCarte = IMG_Load("res/interface/btn_carte.png");
+    if (!surfaceBtnCarte) {
+        std::cerr << "Erreur chargement btn_carte.png : "
+              << IMG_GetError() << std::endl;
+    } else {
+        btnCarteTexture = SDL_CreateTextureFromSurface(renderer, surfaceBtnCarte);
+        SDL_FreeSurface(surfaceBtnCarte);
+}
+
+    // Définition des chemins des 2 frames d'animation
+    std::vector<std::string> chatFrames = {
+        "res/Chat1/Chat1_frame1.png", // Frame 0
+        "res/Chat1/Chat1_frame2.png"  // Frame 1
+    };
 
     //Imporatatin de l'animal avec l'image 
     Animal monAnimal(
@@ -57,11 +83,13 @@ int main(int argc, char* argv[]) {
         "M",
         1,
         renderer,
-        "res/Chat1/Chat1_frame1.png"
+        chatFrames
     );
 
+    changeLieu(m_currentLieu, SCENE_MAISON, renderer, &monAnimal);
     Stats stats;
 
+    //boucle du jeu
     bool run = true;
     SDL_Event evenement;
 
@@ -94,36 +122,71 @@ int main(int argc, char* argv[]) {
                     stats.setSante(stats.getSante() + 10);
                 }
             }
+            if (m_currentLieu) {
+                m_currentLieu->handleEvents(evenement);
+            }
+        }
+        
+        
+        if (m_currentLieu) {
+            m_currentLieu->update();
         }
 
-        // Fonction qui effacer l'écran
-        SDL_SetRenderDrawColor(renderer, 230, 230, 230, 255);
-        SDL_RenderClear(renderer);
+        if (m_currentLieu && m_currentLieu->isTransitionPending()) {
 
-        // Création du cadre qui entoure les boutons et les barres 
-        SDL_Rect cadre = {50, 350, 500, 90};
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderDrawRect(renderer, &cadre);
+            SceneType nextScene = m_currentLieu->getNextScene();
+            std::cout << "Transition vers scene: " << nextScene << std::endl;
 
-        // Dessin des barres d'Etats
-        Barre_Etat(renderer, 330, 360, 200, 10, stats.getFaim(), {255, 0, 0, 255});
-        Barre_Etat(renderer, 330, 380, 200, 10, stats.getJoie(), {0, 255, 0, 255});
-        Barre_Etat(renderer, 330, 400, 200, 10, stats.getSante(), {0, 0, 255, 255});
-        Barre_Etat(renderer, 330, 420, 200, 10, stats.getEnergie(), {255, 255, 0, 255});
+            m_currentLieu->resetTransition();
 
-        // Affichage de l'animal
-        monAnimal.render(renderer);
+            if (nextScene == SCENE_QUIT) {
+                run = false;
+            } else {
+                changeLieu(m_currentLieu, nextScene, renderer, &monAnimal);
+            }
+        }
 
-        // Dessin des boutons 
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-        SDL_RenderFillRect(renderer, &btnNourrir);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderDrawRect(renderer, &btnNourrir);
+        
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
 
-        SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-        SDL_RenderFillRect(renderer, &btnSoigner);
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderDrawRect(renderer, &btnSoigner);
+        // 1. Dessiner la scène EN PREMIER
+        if (m_currentLieu) {
+        m_currentLieu->render(renderer);
+    }
+        if (dynamic_cast<Maison*>(m_currentLieu)){
+            if (btnCarteTexture) {
+                SDL_RenderCopy(renderer, btnCarteTexture, nullptr, &btnCarteRect);
+
+            }
+
+            // cadre
+            SDL_Rect cadre = {50, 350, 500, 90};
+
+            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+            SDL_RenderFillRect(renderer, &cadre);
+
+            // barres d'état
+            Barre_Etat(renderer, 330, 360, 200, 10, stats.getFaim(), {255, 0, 0, 255});
+            Barre_Etat(renderer, 330, 380, 200, 10, stats.getJoie(), {0, 255, 0, 255});
+            Barre_Etat(renderer, 330, 400, 200, 10, stats.getSante(), {0, 0, 255, 255});
+            Barre_Etat(renderer, 330, 420, 200, 10, stats.getEnergie(), {255, 255, 0, 255});
+
+            // boutons
+            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+            SDL_RenderFillRect(renderer, &btnNourrir);
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            SDL_RenderDrawRect(renderer, &btnNourrir);
+
+            SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+            SDL_RenderFillRect(renderer, &btnSoigner);
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            SDL_RenderDrawRect(renderer, &btnSoigner);
+
+            //Contour du grand cadre en noir et affichage
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            SDL_RenderDrawRect(renderer, &cadre);
+        }
 
         // Timer
         Uint32 currentTime = SDL_GetTicks();
@@ -141,10 +204,18 @@ int main(int argc, char* argv[]) {
             lastTime = currentTime;
         }
 
+        //Affichage du résultat sur l'écran
         SDL_RenderPresent(renderer);
+        //Limite FPS à 60 pour économiser des ressources
         SDL_Delay(16);
-    }
+    
+}
+    //tout netoyer
+    if (btnCarteTexture)
+        SDL_DestroyTexture(btnCarteTexture);
 
+    delete m_currentLieu;
     cleanup(window, renderer);
+
     return 0;
 }

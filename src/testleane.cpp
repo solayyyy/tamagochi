@@ -82,7 +82,8 @@ int main(int argc, char* argv[]) {
         chatFrames
     );
 
-    changeLieu(m_currentLieu, SCENE_MAISON, renderer, &monAnimal);
+    changeLieu(m_currentLieu, SCENE_MAISON, renderer, &monAnimal); //corriger et a voir.
+
 
     // Boucle du jeu
     bool running = true;
@@ -105,6 +106,8 @@ int main(int argc, char* argv[]) {
 
         if (m_currentLieu && m_currentLieu->isTransitionPending()) {
             SceneType nextScene = m_currentLieu->getNextScene();
+
+            m_currentLieu->resetTransition();
             
             if (nextScene == SCENE_QUIT) {
                 running = false; // Arrêter la boucle

@@ -7,7 +7,7 @@
 enum SceneType {
     SCENE_MAISON,
     SCENE_ARCADE,
-    SCENE_BOUTIQUE,
+    SCENE_CARTE,
     SCENE_QUIT 
 };
 
@@ -23,18 +23,27 @@ public:
     virtual void render(SDL_Renderer* renderer) = 0;
 
     
-    bool isTransitionPending() const { return m_nextScene != SCENE_MAISON; } // Si ce n'est pas la scène par défaut
+    bool isTransitionPending() const { return m_transitionPending; } // Si ce n'est pas la scène par défaut
     SceneType getNextScene() const { return m_nextScene; }
 
-protected:
-    
-    void requestTransition(SceneType nextScene) {
-        m_nextScene = nextScene;
+    void clearTransition(){
+        m_transitionPending = false;
     }
-    
-private:
-    SceneType m_nextScene = SCENE_MAISON; // SCENE_MAISON sera la valeur par défaut / scène active
+        void requestTransition(SceneType nextScene) {
+        m_nextScene = nextScene;
+        m_transitionPending = true;
+    }
 
+    void resetTransition() {
+        m_transitionPending = false;
+    }
+
+
+protected: //rajout pour fonctionnment a voir aussi
+
+private:
+    bool m_transitionPending = false;
+    SceneType m_nextScene = SCENE_MAISON;
 };
 
 #endif // LIEU_HPP
