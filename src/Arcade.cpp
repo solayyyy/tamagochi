@@ -7,7 +7,7 @@ Arcade::Arcade(SDL_Renderer* renderer)
 {
     background = nullptr;
 
-    SDL_Surface* surface = IMG_Load("res/scene_arcade.png");
+    SDL_Surface* surface = IMG_Load("res/interface/Fleche.png");
     if (!surface) {
         std::cerr << IMG_GetError() << std::endl; //std::cerr pour l'extraction des erreurs
         return;
