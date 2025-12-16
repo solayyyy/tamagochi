@@ -31,7 +31,7 @@ Animal::Animal(const std::string& nom, const std::string& type, const std::strin
 
 
     // Définition de la position et taille initiale 
-    m_position = { 125, 150, 200, 200 };
+    m_position = { 225, 150, 200, 200 };
 
 }
 

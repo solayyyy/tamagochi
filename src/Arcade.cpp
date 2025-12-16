@@ -27,8 +27,11 @@ Arcade::Arcade(SDL_Renderer* renderer)
     }
 
     if (m_btnmj1Texture) {
-        btnmj1 = new Bouton(100, 250, 200, 200, m_btnmj1Texture);
+        btnmj1 = new Bouton(50, 250, 300, 300, m_btnmj1Texture);
     }
+
+    m_miniJeu = nullptr;
+    m_isPlayingGame = false;
 }
 
 
@@ -37,6 +40,27 @@ Arcade::~Arcade()
     if (background) {
         SDL_DestroyTexture(background);
     }
+    if (m_buttonTexture) {
+        SDL_DestroyTexture(m_buttonTexture);
+    }
+    
+    if (m_btnmj1Texture) {
+        SDL_DestroyTexture(m_btnmj1Texture);
+    }
+    
+    if (btnCarte) {
+        delete btnCarte;
+    }
+    
+    if (btnmj1) {
+        delete btnmj1;
+    }
+    
+    
+    if (m_miniJeu) {
+        delete m_miniJeu;
+    }
+
 
     
 }
@@ -77,20 +101,20 @@ void Arcade::handleEvents(SDL_Event& event){
                 }
             }
         }
-    } else {
-        if (event.type == SDL_MOUSEBUTTONDOWN) {
-            int mouseX = event.button.x;
-            int mouseY = event.button.y;
+            } else {
+                if (event.type == SDL_MOUSEBUTTONDOWN) {
+                    int mouseX = event.button.x;
+                    int mouseY = event.button.y;
 
         
-            if (btnCarte && btnCarte->isClicked(mouseX, mouseY)) { 
-                requestTransition(SCENE_CARTE);
-            }
+                if (btnCarte && btnCarte->isClicked(mouseX, mouseY)) { 
+                    requestTransition(SCENE_CARTE);
+                }
 
-            if (btnmj1 && btnmj1->isClicked(mouseX, mouseY)) {
-                std::cout << "Lancement du mini-jeu!\n";
-                m_miniJeu = new MiniJeu();
-                m_isPlayingGame = true;
+                if (btnmj1 && btnmj1->isClicked(mouseX, mouseY)) {
+                    std::cout << "Lancement du mini-jeu!\n";
+                    m_miniJeu = new MiniJeu();
+                    m_isPlayingGame = true;
         
         }
     }

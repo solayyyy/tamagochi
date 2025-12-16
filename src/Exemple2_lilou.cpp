@@ -52,7 +52,9 @@ int main(int argc, char* argv[]) {
     SDL_Window* window = nullptr;
     SDL_Renderer* renderer = nullptr;
     SDL_Texture* btnCarteTexture = nullptr;
+    SDL_Texture* btnNourrirTexture = nullptr;
     SDL_Rect btnCarteRect = {160, 360, 80, 20};
+    SDL_Rect btnNourrir = {300, 100, 80, 20};
 
     if (!Init_SDL(&window, &renderer))
     
@@ -68,6 +70,15 @@ int main(int argc, char* argv[]) {
     } else {
         btnCarteTexture = SDL_CreateTextureFromSurface(renderer, surfaceBtnCarte);
         SDL_FreeSurface(surfaceBtnCarte);
+}
+
+    SDL_Surface* surfaceBtnNourrir = IMG_Load("res/interface/bouton_faim.png");
+    if (!surfaceBtnNourrir) {
+        std::cerr << "Erreur chargement bouton_faim.png : "
+              << IMG_GetError() << std::endl;
+    } else {
+        btnNourrirTexture = SDL_CreateTextureFromSurface(renderer, surfaceBtnNourrir);
+        SDL_FreeSurface(surfaceBtnNourrir);
 }
 
     // Définition des chemins des 2 frames d'animation
@@ -94,7 +105,7 @@ int main(int argc, char* argv[]) {
     SDL_Event evenement;
 
     //Dessin des boutons pour intéragir avec l'animal.(x, y, largeur, hauteur)
-    SDL_Rect btnNourrir = {60, 360, 80, 20};
+    //SDL_Rect btnNourrir = {60, 360, 80, 20};
     SDL_Rect btnSoigner = {60, 390, 80, 20};
 
     // Timer
@@ -159,6 +170,10 @@ int main(int argc, char* argv[]) {
                 SDL_RenderCopy(renderer, btnCarteTexture, nullptr, &btnCarteRect);
 
             }
+            if (btnNourrirTexture) {
+                SDL_RenderCopy(renderer, btnNourrirTexture, nullptr, &btnNourrir);
+
+            }
 
             // cadre
             SDL_Rect cadre = {50, 350, 500, 90};
@@ -173,10 +188,10 @@ int main(int argc, char* argv[]) {
             Barre_Etat(renderer, 330, 420, 200, 10, stats.getEnergie(), {255, 255, 0, 255});
 
             // boutons
-            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-            SDL_RenderFillRect(renderer, &btnNourrir);
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-            SDL_RenderDrawRect(renderer, &btnNourrir);
+            //SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+            //SDL_RenderFillRect(renderer, &btnNourrir);
+            //SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            //SDL_RenderDrawRect(renderer, &btnNourrir);
 
             SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
             SDL_RenderFillRect(renderer, &btnSoigner);
