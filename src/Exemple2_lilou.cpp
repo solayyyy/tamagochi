@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
     SDL_Texture* btnCarteTexture = nullptr;
     SDL_Texture* btnNourrirTexture = nullptr;
     SDL_Rect btnCarteRect = {160, 360, 80, 20};
-    SDL_Rect btnNourrir = {300, 100, 80, 20};
+    SDL_Rect btnNourrir = {80, 350, 40, 40};
 
     if (!Init_SDL(&window, &renderer))
     
@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
     
     Lieu* m_currentLieu = nullptr;
-    SDL_Surface* surfaceBtnCarte = IMG_Load("res/interface/btn_carte.png");
+    SDL_Surface* surfaceBtnCarte = IMG_Load("res/interface/Fleche.png");
     if (!surfaceBtnCarte) {
         std::cerr << "Erreur chargement btn_carte.png : "
               << IMG_GetError() << std::endl;
@@ -170,16 +170,18 @@ int main(int argc, char* argv[]) {
                 SDL_RenderCopy(renderer, btnCarteTexture, nullptr, &btnCarteRect);
 
             }
-            if (btnNourrirTexture) {
-                SDL_RenderCopy(renderer, btnNourrirTexture, nullptr, &btnNourrir);
-
-            }
+            
 
             // cadre
             SDL_Rect cadre = {50, 350, 500, 90};
 
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             SDL_RenderFillRect(renderer, &cadre);
+
+            if (btnNourrirTexture) {
+                SDL_RenderCopy(renderer, btnNourrirTexture, nullptr, &btnNourrir);
+
+            }
 
             // barres d'état
             Barre_Etat(renderer, 330, 360, 200, 10, stats.getFaim(), {255, 0, 0, 255});

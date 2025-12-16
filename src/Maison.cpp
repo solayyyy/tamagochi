@@ -13,7 +13,7 @@ Maison::Maison(SDL_Renderer* renderer, Animal* animal) :
 {
     // CHARGEMENT DES RESSOURCES DU BOUTON
     // (Assurez-vous que cette image existe)
-    m_buttonTexture = loadTexture(renderer, "res/interface/btn_carte.png"); 
+    m_buttonTexture = loadTexture(renderer, "res/interface/Fleche.png"); 
     m_background = loadTexture(renderer, "res/scene_chambre.png");
     m_buttonfaim = loadTexture(renderer, "res/interface/bouton_faim.png");
     

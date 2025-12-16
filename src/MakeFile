@@ -1,1 +1,1 @@
-g++ src/Exemple2_lilou.cpp src/Animal.cpp src/Statistique.cpp src/Arcade.cpp src/Bouton.cpp src/Init_SDL.cpp src/Boutique.cpp src/Carte.cpp src/Joueur.cpp src/Maison.cpp src/Nourriture.cpp -Iinclude/headers -Iinclude/sdl -Llib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -o test.exe
+g++ src/Exemple2_lilou.cpp src/Animal.cpp src/Statistique.cpp src/Arcade.cpp src/Bouton.cpp src/Init_SDL.cpp src/Boutique.cpp src/Carte.cpp src/Joueur.cpp src/Maison.cpp src/Nourriture.cpp src/MiniJeu.cpp -Iinclude/headers -Iinclude/sdl -Llib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -o test.exe
