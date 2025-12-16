@@ -6,6 +6,8 @@
 Maison::Maison(SDL_Renderer* renderer, Animal* animal) : 
     m_animal(animal),
     btnCarte(nullptr),
+    btnFaim(nullptr),
+    m_buttonfaim(nullptr),
     m_buttonTexture(nullptr),
     m_background(nullptr)
 {
@@ -13,11 +15,12 @@ Maison::Maison(SDL_Renderer* renderer, Animal* animal) :
     // (Assurez-vous que cette image existe)
     m_buttonTexture = loadTexture(renderer, "res/interface/btn_carte.png"); 
     m_background = loadTexture(renderer, "res/scene_chambre.png");
+    m_buttonfaim = loadTexture(renderer, "res/interface/bouton_faim.png");
     
     // CRÉATION DE L'OBJET BOUTON
     // Le bouton est placé en haut à droite (par exemple)
     if (m_buttonTexture){
-        btnCarte = new Bouton(300, 20, 80, 40, m_buttonTexture); 
+        btnCarte = new Bouton(510, 10, 80, 80, m_buttonTexture); 
     }
 }
 //paramètre de destruction

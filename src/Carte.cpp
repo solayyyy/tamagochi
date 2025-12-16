@@ -64,6 +64,7 @@ void Carte::handleEvents(SDL_Event& event){
         if (mx >= btnArcade.x && mx <= btnArcade.x + btnArcade.w &&
             my >= btnArcade.y && my <= btnArcade.y + btnArcade.h) {
             requestTransition(SCENE_ARCADE);
+            std::cout << "CLIC ARCADE OK\n";
         }
     }
 }

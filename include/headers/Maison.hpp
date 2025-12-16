@@ -21,6 +21,9 @@ private:
     SDL_Texture* m_background; // une image de fond de la maison
     
     Bouton* btnCarte; 
+
+    Bouton* btnFaim;
+    SDL_Texture* m_buttonfaim;
     
     // NOUVEAU : La texture du bouton (doit être chargée une fois)
     SDL_Texture* m_buttonTexture; 
