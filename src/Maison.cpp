@@ -1,5 +1,7 @@
 
 #include "Maison.hpp"
+#include "Statistique.hpp"
+#include "Init_SDL.hpp"
 #include <iostream>
 #include <SDL_image.h>
 
@@ -10,29 +12,62 @@ Maison::Maison(SDL_Renderer* renderer, Animal* animal) :
     m_buttonfaim(nullptr),
     m_buttonTexture(nullptr),
     m_background(nullptr)
-{
-    // CHARGEMENT DES RESSOURCES DU BOUTON
-    // (Assurez-vous que cette image existe)
-    m_buttonTexture = loadTexture(renderer, "res/interface/Fleche.png"); 
+{   
     m_background = loadTexture(renderer, "res/scene_chambre.png");
+    if (!m_background) {
+        std::cerr << "ERREUR chargement scene_chambre.png" << std::endl;
+    }
+
+    //Chargement des boutons ressources !
+    m_buttonTexture = loadTexture(renderer, "res/interface/Fleche.png"); 
     m_buttonfaim = loadTexture(renderer, "res/interface/bouton_faim.png");
+    m_buttonSoigner = loadTexture(renderer, "res/interface/kitdesoins.png");
+
+    //Création d'une position pour les bouttons :
+    if (m_buttonfaim) {
+        btnFaim = new Bouton(80, 350, 40, 40, m_buttonfaim);
+    }
+
+    if (m_buttonSoigner) {
+        btnSoigner = new Bouton(60, 390, 40, 40, m_buttonSoigner);
+    }
     
-    // CRÉATION DE L'OBJET BOUTON
-    // Le bouton est placé en haut à droite (par exemple)
+    // Création du bouton Carte (flèche).
     if (m_buttonTexture){
         btnCarte = new Bouton(510, 10, 80, 80, m_buttonTexture); 
     }
 }
-//paramètre de destruction
+
+//paramètre de destruction Texture plus objet
 Maison::~Maison() {
     if (btnCarte) {
         delete btnCarte;
         btnCarte = nullptr;
     }
 
+    if (btnFaim) {
+        delete btnFaim;
+        btnFaim = nullptr;
+    }
+
+    if (btnSoigner) {
+        delete btnSoigner;
+        btnSoigner = nullptr;
+    }
+
     if (m_buttonTexture) {
         SDL_DestroyTexture(m_buttonTexture);
         m_buttonTexture = nullptr;
+    }
+
+    if (m_buttonfaim){
+        SDL_DestroyTexture(m_buttonfaim);
+        m_buttonfaim = nullptr;
+    }
+
+    if (m_buttonSoigner) {
+        SDL_DestroyTexture(m_buttonSoigner);
+        m_buttonSoigner = nullptr;
     }
 
     if (m_background) {
@@ -44,14 +79,23 @@ Maison::~Maison() {
 void Maison::handleEvents(SDL_Event& event) {
     // Logique de la Maison: 
     if (event.type == SDL_MOUSEBUTTONDOWN) {
-        int mouseX = event.button.x;
-        int mouseY = event.button.y;
+        int x = event.button.x;
+        int y = event.button.y;
 
-        // Exemple : si le clic est dans la zone du bouton "Arcade" (à définir)
-        if (btnCarte && btnCarte->isClicked(mouseX, mouseY)) { 
+        if (btnCarte && btnCarte->isClicked(x, y)) {
             requestTransition(SCENE_CARTE);
         }
-    // Par exemple, si on clique sur un bouton "Nourrir"
+
+         if (btnFaim && btnFaim->isClicked(x, y)) {
+            m_animal->getStats().setFaim(
+            m_animal->getStats().getFaim() + 25);
+    }
+
+        if (btnSoigner && btnSoigner->isClicked(x, y)) {
+            m_animal->getStats().setSante(
+            m_animal->getStats().getSante() + 10);
+        }
+    
     }
 }
 
@@ -64,33 +108,59 @@ void Maison::update() {
 }
 
 void Maison::render(SDL_Renderer* renderer) {
+    SDL_RenderCopy(renderer, m_background, nullptr, nullptr);
     // 1. Dessiner le fond
     if (!m_background) {
         std::cerr << "DEBUG: m_background est NULL\n";
-        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // rouge debug 🔴
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
         SDL_RenderClear(renderer);
         return;
     }
-    if (m_background) {
-        SDL_RenderCopy(renderer, m_background, NULL, NULL);
-    } else {
-        // Fond debug si texture absente 
-        SDL_SetRenderDrawColor(renderer, 50, 50, 150, 255);
-        SDL_RenderClear(renderer);
-    }
+
+    SDL_RenderCopy(renderer, m_background, nullptr, nullptr);
 
     // 2. Dessiner l'animal
     if (m_animal) {
         m_animal->render(renderer);
     }
+    // cadre
+    SDL_Rect cadre = {50, 350, 500, 90};
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderFillRect(renderer, &cadre);
+
     // Dessine le bouton
     if (btnCarte) {
         btnCarte->render(renderer);
     }
-}
     
+    if (btnFaim) {
+        btnFaim->render(renderer);
+    }
 
+    if (btnSoigner) {
+        btnSoigner->render(renderer);
+    }
     // 3. Dessiner les boutons/menus spécifiques à la Maison
+
+    // barres d'état
+    Barre_Etat(renderer, 330, 360, 200, 10,
+               m_animal->getStats().getFaim(), {255, 0, 0, 255});
+
+    Barre_Etat(renderer, 330, 380, 200, 10,
+               m_animal->getStats().getJoie(), {0, 255, 0, 255});
+
+    Barre_Etat(renderer, 330, 400, 200, 10,
+               m_animal->getStats().getSante(), {0, 0, 255, 255});
+
+    Barre_Etat(renderer, 330, 420, 200, 10,
+               m_animal->getStats().getEnergie(), {255, 255, 0, 255});
+
+
+    //Contour du grand cadre en noir et affichage
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderDrawRect(renderer, &cadre);
+}
+
     // Fonction utilitaire pour le chargement (À déplacer dans un fichier utilitaire propre)
 SDL_Texture* Maison::loadTexture(SDL_Renderer* renderer, const std::string& chemin) {
     SDL_Surface* surface = IMG_Load(chemin.c_str());

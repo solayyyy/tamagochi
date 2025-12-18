@@ -24,9 +24,15 @@ private:
 
     Bouton* btnFaim;
     SDL_Texture* m_buttonfaim;
+
+    Bouton* btnSoigner;
+    SDL_Texture * m_buttonSoigner;
     
     // NOUVEAU : La texture du bouton (doit être chargée une fois)
     SDL_Texture* m_buttonTexture; 
+
+    
+    
 
     // Méthode utilitaire pour charger les textures des boutons
     SDL_Texture* loadTexture(SDL_Renderer* renderer, const std::string& chemin);
