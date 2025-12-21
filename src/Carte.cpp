@@ -20,8 +20,8 @@ Carte::Carte(SDL_Renderer* renderer){
     texBtnMaison = IMG_LoadTexture(renderer, "res/interface/btn_maison.png");
     texBtnArcade = IMG_LoadTexture(renderer, "res/interface/bouton_arcade.png");
 
-    btnMaison = { 100, 300, 200, 80 };
-    btnArcade = { 400, 300, 200, 80 };
+    btnMaison = { 80, 150, 200, 200 };
+    btnArcade = { 400, 300, 200, 200 };
 
 }
 
