@@ -84,8 +84,8 @@ void Arcade::render(SDL_Renderer* renderer)
         }
     }
 }
-
 void Arcade::handleEvents(SDL_Event& event){
+
     if (m_isPlayingGame && m_miniJeu) {
         // Le mini-jeu gère ses propres événements
         // Si le jeu est terminé et qu'on appuie sur ESC/RETURN

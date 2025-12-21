@@ -4,10 +4,19 @@
 #include <SDL_image.h>
 
 //Explication de la création de la classe Animal à compléter plus tard dans le main 
-Animal::Animal(const std::string& nom, const std::string& type, const std::string& sexe, int age,
-               SDL_Renderer* renderer, const std::vector<std::string>& chemin_image) 
-    : nom(nom), type(type), sexe(sexe), age(age), 
-      m_lastFrameTime(SDL_GetTicks()) {
+Animal::Animal(const std::string& nom,
+               const std::string& type,
+               const std::string& sexe,
+               int age,
+               SDL_Renderer* renderer,
+               const std::vector<std::string>& chemin_image)
+    : nom(nom),
+      type(type),
+      sexe(sexe),
+      age(age),
+      m_lastFrameTime(SDL_GetTicks())
+    { 
+        m_stats = new Stats();
 
 
         //Chargement SDL
@@ -26,14 +35,14 @@ Animal::Animal(const std::string& nom, const std::string& type, const std::strin
             }
 
         SDL_FreeSurface(surface); 
-        }
+    }
 
 
 
     // Définition de la position et taille initiale 
     m_position = { 225, 150, 200, 200 };
 
-}
+    }
 
 
     Animal::~Animal() {
@@ -41,6 +50,7 @@ Animal::Animal(const std::string& nom, const std::string& type, const std::strin
     for (SDL_Texture* texture : m_textures) {
         SDL_DestroyTexture(texture);
     }
+    delete m_stats;
 }
 
 // Ici on verifie le type, le sexe et l'age de l'animal
