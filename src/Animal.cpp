@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-//Explication de la création de la classe Animal à compléter plus tard dans le main 
+// classe Animal
 Animal::Animal(const std::string& nom,
                const std::string& type,
                const std::string& sexe,
@@ -36,8 +36,6 @@ Animal::Animal(const std::string& nom,
 
         SDL_FreeSurface(surface); 
     }
-
-
 
     // Définition de la position et taille initiale 
     m_position = { 225, 150, 200, 200 };
