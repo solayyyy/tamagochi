@@ -17,13 +17,13 @@ Arcade::Arcade(SDL_Renderer* renderer)
     background = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_FreeSurface(surface);
 
-    m_buttonTexture = loadTexture(renderer, "res/interface/btn_carte.png");
+    m_buttonTexture = loadTexture(renderer, "res/interface/Fleche.png");
 
     m_btnmj1Texture = loadTexture(renderer, "res/interface/btnminijeu1.png");
 
 
     if (m_buttonTexture) {
-        btnCarte = new Bouton(300, 20, 80, 40, m_buttonTexture);
+        btnCarte = new Bouton(500, 250, 80, 40, m_buttonTexture);
     }
 
     if (m_btnmj1Texture) {
