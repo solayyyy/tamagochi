@@ -1,4 +1,4 @@
-
+#include "MiniJeu.hpp"
 #include <cstdlib>
 #include <ctime>
 
