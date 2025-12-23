@@ -1,8 +1,6 @@
 #ifndef ANIMAL_HPP //Pour éviter toute confusion on l'écrit en MAJUSCULE
 #define ANIMAL_HPP
 
-
-
 #include <SDL.h>
 #include <SDL_image.h>
 #include  "Statistique.hpp"
