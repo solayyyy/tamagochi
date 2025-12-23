@@ -33,6 +33,8 @@ private:
     MiniJeu* m_miniJeu;  
     bool m_isPlayingGame;
 
+
+
     // Fonction utilitaire pour charger les textures
     SDL_Texture* loadTexture(SDL_Renderer* renderer, const std::string& chemin);
 

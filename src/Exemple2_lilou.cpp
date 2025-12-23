@@ -94,12 +94,12 @@ int main(int argc, char* argv[]) {
 
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) run = false;
-            if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)
-                run = false;
+            
 
             if (m_currentLieu) {
                 m_currentLieu->handleEvents(event);
             }
+            
         }
 
         if (m_currentLieu) {

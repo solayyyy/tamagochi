@@ -1,4 +1,5 @@
 #include "Arcade.hpp"
+#include "MiniJeu.hpp"
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -6,11 +7,12 @@
 
 Arcade::Arcade(SDL_Renderer* renderer)
 {
+    m_renderer = renderer;
     background = nullptr;
 
     SDL_Surface* surface = IMG_Load("res/scene_arcade.png");
     if (!surface) {
-        std::cerr << IMG_GetError() << std::endl; //std::cerr pour l'extraction des erreurs
+        std::cerr << IMG_GetError() << std::endl;
         return;
     }
 
@@ -18,9 +20,7 @@ Arcade::Arcade(SDL_Renderer* renderer)
     SDL_FreeSurface(surface);
 
     m_buttonTexture = loadTexture(renderer, "res/interface/Fleche.png");
-
     m_btnmj1Texture = loadTexture(renderer, "res/interface/btnminijeu1.png");
-
 
     if (m_buttonTexture) {
         btnCarte = new Bouton(500, 250, 80, 40, m_buttonTexture);
@@ -29,11 +29,7 @@ Arcade::Arcade(SDL_Renderer* renderer)
     if (m_btnmj1Texture) {
         btnmj1 = new Bouton(50, 250, 300, 300, m_btnmj1Texture);
     }
-
-    m_miniJeu = nullptr;
-    m_isPlayingGame = false;
 }
-
 
 Arcade::~Arcade()
 {
@@ -43,86 +39,84 @@ Arcade::~Arcade()
     if (m_buttonTexture) {
         SDL_DestroyTexture(m_buttonTexture);
     }
-    
     if (m_btnmj1Texture) {
         SDL_DestroyTexture(m_btnmj1Texture);
     }
-    
     if (btnCarte) {
         delete btnCarte;
     }
-    
     if (btnmj1) {
         delete btnmj1;
     }
-    
-    
-    if (m_miniJeu) {
-        delete m_miniJeu;
-    }
-
-
-    
 }
 
 void Arcade::render(SDL_Renderer* renderer)
 {   
-    if (m_isPlayingGame && m_miniJeu) {
-        // Afficher le mini-jeu
+     if (m_isPlayingGame && m_miniJeu) {
+        std::cout << "Rendu du mini-jeu" << std::endl;
+        
+        // Le mini-jeu affiche son propre rendu
         m_miniJeu->render(renderer);
+        
     } else {
         if (background) {
             SDL_RenderCopy(renderer, background, nullptr, nullptr);
         }
-
         if (btnCarte) {
             btnCarte->render(renderer);
         }
-
         if (btnmj1) {
             btnmj1->render(renderer);
         }
     }
 }
-void Arcade::handleEvents(SDL_Event& event){
 
-    if (m_isPlayingGame && m_miniJeu) {
-        // Le mini-jeu gère ses propres événements
-        // Si le jeu est terminé et qu'on appuie sur ESC/RETURN
+void Arcade::handleEvents(SDL_Event& event)
+
+   
+{
+   if (m_isPlayingGame && m_miniJeu) {
+        std::cout << "HandleEvents du mini-jeu" << std::endl;
+        
+        // Le mini-jeu gère l'événement
+        m_miniJeu->update(m_renderer, event);
+        
+        // Vérifier si le jeu est terminé
         if (m_miniJeu->isFinished()) {
-            if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_ESCAPE || 
-                    event.key.keysym.sym == SDLK_RETURN) {
-                    // Quitter le mini-jeu
-                    delete m_miniJeu;
-                    m_miniJeu = nullptr;
-                    m_isPlayingGame = false;
-                    std::cout << "Retour au menu Arcade\n";
-                }
-            }
+            int score = m_miniJeu->getScore();
+            std::cout << "Score final: " << score << " pièces!\n";
+            
+            delete m_miniJeu;
+            m_miniJeu = nullptr;
+            m_isPlayingGame = false;
+            std::cout << "Retour au menu Arcade\n";
         }
-            } else {
-                if (event.type == SDL_MOUSEBUTTONDOWN) {
-                    int mouseX = event.button.x;
-                    int mouseY = event.button.y;
-
         
-                if (btnCarte && btnCarte->isClicked(mouseX, mouseY)) { 
-                    requestTransition(SCENE_CARTE);
-                }
+    } else {
+        // Menu Arcade normal
+        if (event.type == SDL_MOUSEBUTTONDOWN) {
+            int mouseX = event.button.x;
+            int mouseY = event.button.y;
 
-                if (btnmj1 && btnmj1->isClicked(mouseX, mouseY)) {
-                    std::cout << "Lancement du mini-jeu!\n";
-                    m_miniJeu = new MiniJeu();
-                    m_isPlayingGame = true;
-        
+            if (btnCarte && btnCarte->isClicked(mouseX, mouseY)) { 
+                requestTransition(SCENE_CARTE);
+            }
+
+            if (btnmj1 && btnmj1->isClicked(mouseX, mouseY)) {
+                std::cout << "=== LANCEMENT DU SNAKE ===" << std::endl;
+                m_miniJeu = new MiniJeu();
+                m_isPlayingGame = true;
+                std::cout << "m_isPlayingGame = " << m_isPlayingGame << std::endl;
+            }
         }
     }
 }
-}
 
-void Arcade::update(){
-    //Same que handleEvents
+void Arcade::update()
+{
+    if (m_isPlayingGame && m_miniJeu) {
+        std::cout << "Update du mini-jeu" << std::endl;
+    }
 }
 
 SDL_Texture* Arcade::loadTexture(SDL_Renderer* renderer, const std::string& chemin)
